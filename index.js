@@ -3,7 +3,7 @@ const bodyParser= require("body-parser");
 const request= require("request");
 const app=express();
 
-var infoServer="https://apiv2.bitcoinaverage.com/indices/global/ticker/"
+var infoServer="https://apiv2.bitcoinaverage.com/convert/global"
 
 app.use(bodyParser.urlencoded({extended:true}));
 app.listen(3000,function(){
@@ -17,9 +17,25 @@ app.get("/",function(req,res){
 });
 //infoServer+req.body.crypto+req.body.fiat
 app.post("/",function(req,res){
-	request(infoServer+req.body.crypto+req.body.fiat, function (error, response, body) {
+	var crypto=req.body.crypto;
+	var fiat=req.body.fiat;
+	var amount= req.body.amount;
+	var options={
+		url: infoServer,
+		method: "GET",
+		qs:{
+			from: crypto,
+			to: fiat,
+			amount: amount
+		}
+	};
+
+	request(options, function (error, response, body) {
 	var data= JSON.parse(body);
-	res.send("The price of " + req.body.crypto + " is: " + data.last + " " + req.body.fiat);
+	price= data.price;
+	time= data.time
+	res.write("Current time is: "+ time)
+	res.send("The price of " + amount +" " +crypto + " is: " + price + " " + fiat);
 	});
 });
 
