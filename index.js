@@ -3,20 +3,14 @@ const bodyParser= require("body-parser");
 const request= require("request");
 const app=express();
 
-var infoServer="https://apiv2.bitcoinaverage.com/convert/global"
-
 app.use(bodyParser.urlencoded({extended:true}));
-app.listen(3000,function(){
-	console.log("server use port 3000");
-});
-
-
 
 app.get("/",function(req,res){
 	res.sendFile(__dirname+"/index.html")
 });
 //infoServer+req.body.crypto+req.body.fiat
 app.post("/",function(req,res){
+  var infoServer="https://apiv2.bitcoinaverage.com/convert/global"
 	var crypto=req.body.crypto;
 	var fiat=req.body.fiat;
 	var amount= req.body.amount;
@@ -29,7 +23,6 @@ app.post("/",function(req,res){
 			amount: amount
 		}
 	};
-
 	request(options, function (error, response, body) {
 	var data= JSON.parse(body);
 	price= data.price;
@@ -39,3 +32,6 @@ app.post("/",function(req,res){
 	});
 });
 
+app.listen(3000,function(){
+	console.log("server use port 3000");
+});
